@@ -1,0 +1,41 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %} Posts {% endblock %}
+
+{% block head %} {{ knp_pagination_rel_links(posts) }} {% endblock %}
+
+{% block content %}
+ 
+<div>
+    <form class="grid grid-cols-10 gap-3">
+        <div>
+            <select name="postType" class="col-span-2 flex-none bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ">        
+                <option value="">All</option>
+                {% for type in types %}
+                    <option {{  app.request.get('postType') is defined and app.request.get('postType') == type.id ? 'selected' : '' }} value="{{ type.id }}">{{ type.title }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div>
+            <select name="categories[]" multiple class="col-span-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ">
+                <option value="">All</option>
+                {% for cat in categories %}
+                    <option value="{{ cat.id }}">{{ cat.title }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div>
+            <button class="bg-indigo-500 p-2 rounded-lg text-sm text-white">
+                submit
+            </button>
+        </div>
+    </form>
+</div>
+{% include 'component/post/box.html.twig' with {'posts': posts} %}
+    
+    <div class="navigation">
+        {{ knp_pagination_render(posts, 'component/general/paginate.html.twig') }}
+    </div>
+
+{% endblock %}
+

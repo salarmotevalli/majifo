@@ -1,0 +1,15 @@
+{% extends "base.html.twig" %}
+
+{% block body %}
+<div class="min-h-full">
+    {% include 'admin/header.html.twig' %}
+    
+    {% include 'admin/title.html.twig' with {'title': title} %}
+  
+  <main>
+    <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+        {% block content %}{% endblock %}
+    </div>
+  </main>
+</div>
+{% endblock %}

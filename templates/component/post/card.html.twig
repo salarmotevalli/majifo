@@ -1,0 +1,22 @@
+<article class="flex max-w-xl shadow rounded-lg bg-white border-2 p-3 flex-col items-start justify-between">
+  <div class="flex items-center gap-x-4 text-xs">
+    <time datetime="2020-03-16" class="text-gray-500">Mar 16, 2020</time>
+  <div><span class="text-gray-600 bg-gray-100 p-1 rounded">{{post.postType.title}}</span></div>  
+  </div>
+  <div class="group relative">
+    <h3 class="mt-3 text-lg/6 font-semibold text-gray-900 group-hover:text-gray-600">
+      <a href="#" class="text-indigo-800">
+        <span class="absolute inset-0"></span>
+        {{ post.title|upper }}
+      </a>
+    </h3>
+    <p class="mt-5 line-clamp-3 text-sm/6 text-gray-600">{{ post.content|length > 70 ? post.content|slice(0, 70) ~ '...' : post.content }}</p>
+  </div>
+  <div>
+        <span class="text-sm text-gray-400">Category: </span>
+        {% for category in post.categories %}
+            <span class="text-gray-600 bg-gray-100 p-1 rounded text-sm">{{category.title}}</span>
+        {% endfor %}
+  </div>
+</article>
+

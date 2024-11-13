@@ -1,0 +1,21 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %} Home Page {% endblock %}
+
+{% block content %}
+
+    <div class="mx-12"> 
+        {% include "component/home/hero.html.twig" with {'title': 'Home Page'} %}
+
+        <div class=" border-t border-gray-200 pt-5  sm:pt-10">
+            <div>
+                <span class="text-indigo-800">Last Published Posts</span>    
+            </div>
+            
+            {% include 'component/post/box.html.twig' with {'posts': latestPosts} %}
+            
+        </div>
+    </div>
+
+{% endblock %}
+

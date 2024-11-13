@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+
+{% block body %}
+
+    <div class="mx-12"> 
+        {% include "component/general/header.html.twig"%}
+
+        {% block content %} {% endblock %}
+    </div>
+
+{% endblock %}
+

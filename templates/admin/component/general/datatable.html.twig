@@ -1,0 +1,22 @@
+
+{% block head %} {{ knp_pagination_rel_links(items) }} {% endblock %}
+
+    <div class="mt-10 flex flex-col w-full h-full overflow-scroll text-gray-700 bg-white shadow-md rounded-lg bg-clip-border">
+
+<table class=" w-full text-left table-auto min-w-max">
+    <colgroup>
+        <col span="1" class="bg-indigo-100">
+    </colgroup>
+    <thead class="bg-slate-50">
+        {{ thead }}
+    </thead>
+    
+    <tbody>
+        {{ tbody }}
+    </tbody>
+ </table>
+
+ <div class="navigation">
+ {{ knp_pagination_render(items, 'component/general/paginate.html.twig') }}
+ </div>
+ </div>

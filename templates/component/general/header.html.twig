@@ -1,0 +1,17 @@
+<div class="mt-5">
+    <a href="{{ path('home') }}" class="text-indigo-500 text-sm/6 font-semibold text-gray-900">Home</a>
+    <a href="{{ path('post') }}" class="text-indigo-500 text-sm/6 font-semibold text-gray-900">Posts</a>
+    {% if  is_granted('IS_AUTHENTICATED_FULLY') %}
+        <form class="inline ml-5" action="{{ path('app_logout')}}" method="POST">
+          <button type="submit" class="text-indigo-500 text-sm/6 font-semibold text-gray-900" id="user-menu-button" aria-expanded="false" aria-haspopup="true">
+          logout
+          </button>
+         </form>    
+    {% else %}
+    <div class="ml-5 inline">
+        <a href="{{ path('app_login') }}" class="text-indigo-500 text-sm/6 font-semibold text-gray-900">Login</a>
+        <a href="{{ path('app_register') }}" class="text-indigo-500 text-sm/6 font-semibold text-gray-900">Register</a>
+    </div>
+    {% endif %}
+
+</div>
