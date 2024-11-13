@@ -28,6 +28,10 @@ trait PostScopeTrait {
         ->setParameter('id', $type_id, UlidType::NAME);
     }
 
+    public function orderByPublishedAt(QueryBuilder $builder, $order = 'ASC') {
+        $builder->orderBy('post.publishedAt', $order);
+    }
+
     public function categories(QueryBuilder $builder, array $categories) {
         // TODO: refactore
         // convert ulids to uuids

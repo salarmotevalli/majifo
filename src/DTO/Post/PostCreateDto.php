@@ -7,12 +7,17 @@ use App\Entity\Post;
 use App\Entity\PostType;
 use DateTime;
 
+use Symfony\Component\Validator\Constraints as Assert;
+
+
 class PostCreateDto implements ToEntityInterface {
     public function __construct(
-        public readonly ?string $title,
-        public readonly ?string $content,
-        public readonly ?PostType $type,
-        public readonly ?DateTime $publishedAt,
+        
+        #[Assert\NotBlank]
+        public readonly string $title,
+        public readonly string $content,
+        public readonly PostType $type,
+        public readonly DateTime $publishedAt,
     ) {}   
 
     public function toEntity() {
@@ -22,5 +27,7 @@ class PostCreateDto implements ToEntityInterface {
         $post->setContent($this->content);
         $post->setPostType($this->type);
         $post->setPublishedAt($this->publishedAt);
+
+        return $post;
     }
 }

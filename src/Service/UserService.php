@@ -33,8 +33,7 @@ class UserService
         return $this->repo->find($id);
     }
     
-    public function delete(string $id) {
-        $user = $this->getUserById($id);
+    public function delete(User $user) {
         $this->repo->remove($user);
     }
 }

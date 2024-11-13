@@ -8,6 +8,7 @@ use App\Service\UserService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -67,7 +68,7 @@ class UserController extends AbstractController
         $user = $this->service->getUserById($id);
 
         if (! $user) {
-            // todo
+            throw new NotFoundHttpException();
         }
 
         $form = $this->createForm(UserType::class, $user, ['method' => 'PUT']);
@@ -86,7 +87,13 @@ class UserController extends AbstractController
     #[IsGranted(attribute: 'USER_WRITE')]
     #[Route(path:"admin/user/{id}", name:"admin.user.delete", methods: 'DELETE')]
     public function delete(Request $request, string $id) {
-        $this->service->delete($id);
+        $user = $this->service->getUserById($id);
+
+        if (! $user) {
+            throw new NotFoundHttpException();
+        }
+
+        $this->service->delete($user);
 
         return $this->redirectToRoute('admin.user.index');
     }

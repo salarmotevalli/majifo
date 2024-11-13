@@ -48,8 +48,11 @@ class Post
     /**
      * @var Collection<int, Approval>
      */
-    #[ORM\OneToMany(targetEntity: Approval::class, mappedBy: 'pppp')]
+    #[ORM\OneToMany(targetEntity: Approval::class, mappedBy: 'post')]
     private Collection $approvals;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $imageFilename = null;
 
     public function __construct()
     {
@@ -187,6 +190,18 @@ class Post
     public function setStatus(ApprovalStatusEnum $staus): static
     {
         $this->status = $staus;
+
+        return $this;
+    }
+
+    public function getImageFilename(): ?string
+    {
+        return $this->imageFilename;
+    }
+
+    public function setImageFilename(?string $imageFilename): static
+    {
+        $this->imageFilename = $imageFilename;
 
         return $this;
     }

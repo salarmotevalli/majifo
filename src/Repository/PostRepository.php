@@ -24,16 +24,24 @@ class PostRepository extends ServiceEntityRepository
         parent::__construct($registry, Post::class);
     }
 
-    public function getPublishedAndApprovedPostsQuery(array $scopes) {
+    public function getLastPublishedAndApprovedPostsQuery(array $scopes) {
         $qBuilder = $this
         ->createQueryBuilder('post');
-
-        $scopes['isPublished'] = true;
-        $scopes['status'] = ApprovalStatusEnum::APPROVED;
-
+        
+        $this->isPublished($qBuilder, true);
+        $this->status($qBuilder, ApprovalStatusEnum::APPROVED);
         $this->applyScopeSafe($qBuilder, $scopes);
+        $this->orderByPublishedAt($qBuilder, 'DESC');
         
         return $qBuilder;
+    }
+
+    public function getLastNPublishedAndApprovedPosts(int $n)
+    {
+        return $this->getLastPublishedAndApprovedPostsQuery([])
+            ->setMaxResults($n)
+            ->getQuery()
+            ->getResult();
     }
 
     public function save(Post $entity)

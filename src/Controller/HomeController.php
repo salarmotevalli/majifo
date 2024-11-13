@@ -17,7 +17,7 @@ class HomeController extends AbstractController
     #[Route('/', name: 'home')]
     public function home()
     {
-        $latestPosts = $this->postService->getNLastPublishedPosts(4);
+        $latestPosts = $this->postService->getLastFiveQualifiedPosts();
 
         return $this->render('page/home.html.twig', [
             'latestPosts' => $latestPosts

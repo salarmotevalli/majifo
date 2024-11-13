@@ -6,6 +6,7 @@ use App\DTO\Post\PostCreateDto;
 use App\Entity\Post;
 use App\Entity\User;
 use App\Form\PostType;
+use App\Service\FileUploadService;
 use App\Service\PostService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,12 +16,14 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Uid\Ulid;
 
 #[IsGranted('VIEW_PANEL')]
 class PostController extends AbstractController
 {
     public function __construct(
-        private PostService $service
+        private PostService $service,
+        private FileUploadService $fileService
     )
     {}
 
@@ -45,6 +48,13 @@ class PostController extends AbstractController
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
+            $uploadedFile = $form['imageFile']->getData();
+           
+            if ($uploadedFile) {
+                $fileName = $this->fileService->handleUploadedFile($uploadedFile);
+                $post->setImageFilename($fileName);
+            }
+
             $this->service->store($post, $user);
             return $this->redirectToRoute('admin.post.index');
         }
@@ -87,10 +97,19 @@ class PostController extends AbstractController
         $form = $this->createForm(PostType::class, $post, ['method' => 'PUT']);
         
         $form->handleRequest($request);
+      
         if ($form->isSubmitted() && $form->isValid()) {
             $isStatusChanged = $post->getStatus() != $postStatus;
-            
+
+            $uploadedFile = $form['imageFile']->getData();
+           
+            if ($uploadedFile) {
+                $fileName = $this->fileService->handleUploadedFile($uploadedFile);
+                $post->setImageFilename($fileName);
+            }
+
             $this->service->store($post, $user, $isStatusChanged);
+            
             return $this->redirectToRoute('admin.post.index');
         }
 
@@ -107,6 +126,7 @@ class PostController extends AbstractController
         return $this->redirectToRoute('admin.post.index');
     }
 
+    #[IsGranted('POST_WRITE')]
     #[Route(path: 'api/admin/post', name: 'api.admin.post.store', methods: 'POST')]
     public function createPost(
         #[MapRequestPayload] PostCreateDto $dto,
@@ -114,7 +134,6 @@ class PostController extends AbstractController
     ) {
         /** @var Post */
         $post = $dto->toEntity();
-
         $post->setAuthor($user);
         $this->service->store($post, $user);
     }

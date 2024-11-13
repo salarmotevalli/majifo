@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20241112153317 extends AbstractMigration
+final class Version20241113092959 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -33,7 +33,7 @@ final class Version20241112153317 extends AbstractMigration
         $this->addSql('CREATE INDEX IDX_D11116CA4B89032C ON category_post (post_id)');
         $this->addSql('COMMENT ON COLUMN category_post.category_id IS \'(DC2Type:ulid)\'');
         $this->addSql('COMMENT ON COLUMN category_post.post_id IS \'(DC2Type:ulid)\'');
-        $this->addSql('CREATE TABLE post (id UUID NOT NULL, post_type_id UUID NOT NULL, author_id UUID NOT NULL, title VARCHAR(60) NOT NULL, status INT NOT NULL, content TEXT DEFAULT NULL, published_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE TABLE post (id UUID NOT NULL, post_type_id UUID NOT NULL, author_id UUID NOT NULL, title VARCHAR(60) NOT NULL, status INT NOT NULL, content TEXT DEFAULT NULL, published_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, image_filename VARCHAR(255) DEFAULT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_5A8A6C8DF8A43BA0 ON post (post_type_id)');
         $this->addSql('CREATE INDEX IDX_5A8A6C8DF675F31B ON post (author_id)');
         $this->addSql('COMMENT ON COLUMN post.id IS \'(DC2Type:ulid)\'');

@@ -9,6 +9,8 @@ use App\Event\PostStatusUpdatedEvent;
 use App\Repository\PostRepository;
 use Doctrine\ORM\EntityManager;
 use Knp\Component\Pager\PaginatorInterface;
+use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class PostService
@@ -16,43 +18,46 @@ class PostService
     public function __construct(
         private PostRepository $repo,
         private PaginatorInterface $paginator,
-        private EventDispatcherInterface $dispatcher
-
+        private EventDispatcherInterface $dispatcher,
+        private CacheInterface $cache
         )
     {
     }
 
     public function getQualifiedPostsWithPagonation(int $page, $filters = []) {
         $query = $this->repo
-            ->getPublishedAndApprovedPostsQuery((array) $filters)
-            ->getQuery();
+            ->getLastPublishedAndApprovedPostsQuery((array) $filters)->getQuery();
 
-            return $this->paginator->paginate(
-            $query,
-            $page,
-            8 
-        );  
+        return $this->paginator
+            ->paginate($query,$page,8);  
     }
 
     public function getPostsWithPagonation(int $page) {
         $query = $this->repo->createQueryBuilder('p')
             ->getQuery();
         
-        return $this->paginator->paginate(
-            $query,
-            $page,
-            8 
-        );  
+        return $this->paginator
+            ->paginate($query, $page, 8 );  
     }
 
 
-    public function getNLastPublishedPosts(int $n = 4)
+    public function getLastFiveQualifiedPosts()
     {
-        return $this->repo
-        ->createQueryBuilder('p')
-        ->setMaxResults($n)
-        ->getQuery()
-        ->getResult();
+        return $this->cache
+            ->get('last-five-qualified-posts', function (ItemInterface $item) {
+                $item->expiresAfter(3600);
+
+                return $this->repo->getLastNPublishedAndApprovedPosts(5);
+            }
+        );
+        
+        
+        // repo
+
+        // ->createQueryBuilder('p')
+        // ->setMaxResults(4)
+        // ->getQuery()
+        // ->getResult();
     }
 
     public function store(Post $post, User $user, $isStatusChanged = false) {
