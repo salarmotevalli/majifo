@@ -2,6 +2,7 @@
 
 namespace App\Controller\Admin;
 
+use App\DTO\Post\PostCreateDto;
 use App\Entity\Post;
 use App\Entity\User;
 use App\Form\PostType;
@@ -9,6 +10,7 @@ use App\Service\PostService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
@@ -97,11 +99,23 @@ class PostController extends AbstractController
         ]);
     }
 
-    #[IsGranted('POST_DELETE')]
+    #[IsGranted('POST_WRITE')]
     #[Route(path:"admin/post/{id}", name:"admin.post.delete", methods: 'DELETE')]
     public function delete(Request $request, string $id) {
         $this->service->delete($id);
 
         return $this->redirectToRoute('admin.post.index');
+    }
+
+    #[Route(path: 'api/admin/post', name: 'api.admin.post.store', methods: 'POST')]
+    public function createPost(
+        #[MapRequestPayload] PostCreateDto $dto,
+        #[CurrentUser] User $user
+    ) {
+        /** @var Post */
+        $post = $dto->toEntity();
+
+        $post->setAuthor($user);
+        $this->service->store($post, $user);
     }
 }

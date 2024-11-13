@@ -4,6 +4,7 @@ namespace App\Service;
 
 use App\Entity\Post;
 use App\Entity\User;
+use App\Enum\ApprovalStatusEnum;
 use App\Event\PostStatusUpdatedEvent;
 use App\Repository\PostRepository;
 use Doctrine\ORM\EntityManager;
@@ -55,6 +56,8 @@ class PostService
     }
 
     public function store(Post $post, User $user, $isStatusChanged = false) {
+        $post->setStatus(ApprovalStatusEnum::PENDING);
+        
         $em = $this->repo->getEntityManager();
         $em->persist($post);
         $em->flush();

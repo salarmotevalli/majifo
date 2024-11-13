@@ -31,7 +31,7 @@ class PostRepository extends ServiceEntityRepository
         $scopes['isPublished'] = true;
         $scopes['status'] = ApprovalStatusEnum::APPROVED;
 
-        $this->applyScope($qBuilder, $scopes);
+        $this->applyScopeSafe($qBuilder, $scopes);
         
         return $qBuilder;
     }
