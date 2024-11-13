@@ -51,7 +51,6 @@ class UserController extends AbstractController
         $user = $this->service->getUserById($id);
 
         if (! $user) {
-
             return new Response('not');
         }
 

@@ -36,9 +36,8 @@ class PostTypeService
         return $this->repo->find($id);
     }
 
-    public function delete(string $id) {
-        $post = $this->getPostTypeById($id);
-        $this->repo->remove($post);    
+    public function delete(PostType $type) {
+        $this->repo->remove($type);    
     }
 
     public function getAll() {

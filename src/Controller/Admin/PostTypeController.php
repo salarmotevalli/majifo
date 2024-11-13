@@ -7,6 +7,7 @@ use App\Form\PostTypeType;
 use App\Service\PostTypeService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -68,7 +69,7 @@ class PostTypeController extends AbstractController
         $type = $this->service->getPostTypeById($id);
 
         if (! $type) {
-            // todo
+            throw new NotFoundHttpException();
         }
 
         $form = $this->createForm(PostTypeType::class, $type, ['method' => 'PUT']);
@@ -87,7 +88,13 @@ class PostTypeController extends AbstractController
     #[IsGranted('POST_TYPE_WRITE')]
     #[Route(path:"admin/post-type/{id}", name:"admin.post-type.delete", methods: 'DELETE')]
     public function delete(Request $request, string $id) {
-        $this->service->delete($id);
+        $type = $this->service->getPostTypeById($id);
+
+        if (! $type) {
+            throw new NotFoundHttpException();
+        }
+
+        $this->service->delete($type);
 
         return $this->redirectToRoute('admin.post-type.index');
     }

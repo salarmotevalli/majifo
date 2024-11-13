@@ -120,8 +120,14 @@ class PostController extends AbstractController
 
     #[IsGranted('POST_WRITE')]
     #[Route(path:"admin/post/{id}", name:"admin.post.delete", methods: 'DELETE')]
-    public function delete(Request $request, string $id) {
-        $this->service->delete($id);
+    public function delete(string $id) {
+        $post = $this->service->getPostById($id);
+
+        if (! $post) {
+            throw new NotFoundHttpException();
+        }
+        
+        $this->service->delete($post);
 
         return $this->redirectToRoute('admin.post.index');
     }

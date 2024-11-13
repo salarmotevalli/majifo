@@ -74,8 +74,7 @@ class PostService
         return $this->repo->find($id);
     }
 
-    public function delete(string $id) {
-        $post = $this->getPostById($id);
+    public function delete(Post $post) {
         $this->repo->remove($post);
     }
 }

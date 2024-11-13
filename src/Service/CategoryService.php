@@ -37,8 +37,7 @@ class CategoryService
         return $this->repo->find($id);
     }
     
-    public function delete(string $id) {
-        $cat = $this->getCategoryById($id);
+    public function delete(Category $cat) {
         $this->repo->remove($cat);
     }
 

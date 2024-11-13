@@ -8,6 +8,7 @@ use App\Service\CategoryService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -52,8 +53,7 @@ class CategoryController extends AbstractController
         $cat = $this->service->getCategoryById($id);
 
         if (! $cat) {
-
-            return new Response('not');
+            throw new NotFoundHttpException();
         }
 
         $form = $this->createForm(CategoryType::class, $cat, ['disabled' => true]);
@@ -69,7 +69,7 @@ class CategoryController extends AbstractController
         $cat = $this->service->getCategoryById($id);
 
         if (! $cat) {
-            // todo
+            throw new NotFoundHttpException();
         }
 
         $form = $this->createForm(CategoryType::class, $cat, ['method' => 'PUT']);
@@ -88,7 +88,13 @@ class CategoryController extends AbstractController
     #[IsGranted('CATEGORY_WRITE')]
     #[Route(path:"admin/category/{id}", name:"admin.category.delete", methods: 'DELETE')]
     public function delete(Request $request, string $id) {
-        $this->service->delete($id);
+        $cat = $this->service->getCategoryById($id);
+
+        if (! $cat) {
+            throw new NotFoundHttpException();
+        }
+
+        $this->service->delete($cat);
 
         return $this->redirectToRoute('admin.category.index');
     }
