@@ -35,4 +35,17 @@ class PostRepository extends ServiceEntityRepository
         
         return $qBuilder;
     }
+
+    public function save(Post $entity)
+    {
+        $this->getEntityManager()->persist($entity);
+        $this->getEntityManager()->flush();
+    }
+
+    public function remove(Post $entity): void
+    {
+        $this->getEntityManager()->remove($entity);
+        $this->getEntityManager()->flush();
+    }
+
 }

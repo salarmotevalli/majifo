@@ -30,9 +30,7 @@ class CategoryService
     }
 
     public function store(Category $cat) {
-        $em = $this->repo->getEntityManager();
-        $em->persist($cat);
-        $em->flush();
+        $this->repo->save($cat);
     }
 
     public function getCategoryById(string $id): ?Category {
@@ -41,9 +39,7 @@ class CategoryService
     
     public function delete(string $id) {
         $cat = $this->getCategoryById($id);
-        $em = $this->repo->getEntityManager();
-        $em->remove($cat);
-        $em->flush();
+        $this->repo->remove($cat);
     }
 
     public function getAll() {

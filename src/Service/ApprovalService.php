@@ -13,8 +13,6 @@ class ApprovalService {
 
     public function store(Approval $approval)
     {
-        $em = $this->repo->getEntityManager();
-        $em->persist($approval);
-        $em->flush();
+        $this->repo->save($approval);
     }
 }

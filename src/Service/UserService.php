@@ -26,9 +26,7 @@ class UserService
     }
 
     public function store(User $user) {
-        $em = $this->repo->getEntityManager();
-        $em->persist($user);
-        $em->flush();
+        $this->repo->save($user);    
     }
 
     public function getUserById(string $id): ?User {
@@ -37,8 +35,6 @@ class UserService
     
     public function delete(string $id) {
         $user = $this->getUserById($id);
-        $em = $this->repo->getEntityManager();
-        $em->remove($user);
-        $em->flush();
+        $this->repo->remove($user);
     }
 }

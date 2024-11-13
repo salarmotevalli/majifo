@@ -29,9 +29,7 @@ class PostTypeService
     }
 
     public function store(PostType $type) {
-        $em = $this->repo->getEntityManager();
-        $em->persist($type);
-        $em->flush();
+        $this->repo->save($type);
     }
 
     public function getPostTypeById(string $id): ?PostType {
@@ -40,9 +38,7 @@ class PostTypeService
 
     public function delete(string $id) {
         $post = $this->getPostTypeById($id);
-        $em = $this->repo->getEntityManager();
-        $em->remove($post);
-        $em->flush();
+        $this->repo->remove($post);    
     }
 
     public function getAll() {

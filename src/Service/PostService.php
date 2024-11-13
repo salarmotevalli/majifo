@@ -57,11 +57,9 @@ class PostService
 
     public function store(Post $post, User $user, $isStatusChanged = false) {
         $post->setStatus(ApprovalStatusEnum::PENDING);
+         
+        $this->repo->save($post);
         
-        $em = $this->repo->getEntityManager();
-        $em->persist($post);
-        $em->flush();
-
         if($isStatusChanged) {
             $this->dispatcher->dispatch((new PostStatusUpdatedEvent($post, $user)));     
         }
@@ -73,8 +71,6 @@ class PostService
 
     public function delete(string $id) {
         $post = $this->getPostById($id);
-        $em = $this->repo->getEntityManager();
-        $em->remove($post);
-        $em->flush();
+        $this->repo->remove($post);
     }
 }
