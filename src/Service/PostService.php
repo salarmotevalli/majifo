@@ -41,13 +41,13 @@ class PostService
     }
 
 
-    public function getLastFiveQualifiedPosts()
+    public function getLastFourQualifiedPosts()
     {
         return $this->cache
             ->get('last-five-qualified-posts', function (ItemInterface $item) {
                 $item->expiresAfter(3600);
 
-                return $this->repo->getLastNPublishedAndApprovedPosts(5);
+                return $this->repo->getLastNPublishedAndApprovedPosts(4);
             }
         );
     }

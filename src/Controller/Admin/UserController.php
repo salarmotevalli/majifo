@@ -12,6 +12,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+#[Route('/admin/')]
 class UserController extends AbstractController
 {
     public function __construct(
@@ -20,7 +21,7 @@ class UserController extends AbstractController
     {}
 
     #[IsGranted(attribute: 'USER_READ')]
-    #[Route(path:"admin/user", name:"admin.user.index")]
+    #[Route(path:"user", name:"admin.user.index")]
     public function index(Request $request) {
         return $this->render('admin/page/user/index.html.twig', [
             'items' => $this->service->getUsersWithPagonation($request->query->get('page',1)),
@@ -28,7 +29,7 @@ class UserController extends AbstractController
     }
 
     #[IsGranted(attribute: 'USER_Write')]
-    #[Route(path:"admin/user/new", name:"admin.user.new") ]
+    #[Route(path:"user/new", name:"admin.user.new") ]
     public function new(Request $request) {
         $user =  new User();
         $form = $this->createForm(UserType::class, $user);
@@ -46,7 +47,7 @@ class UserController extends AbstractController
     }
 
     #[IsGranted(attribute: 'POST_READ')]
-    #[Route(path:'admin/user/{id}', name:"admin.user.show", methods: 'GET')]
+    #[Route(path:'user/{id}', name:"admin.user.show", methods: 'GET')]
     public function show(Request $request, string $id) {
         $user = $this->service->getUserById($id);
 
@@ -62,7 +63,7 @@ class UserController extends AbstractController
     }
 
     #[IsGranted(attribute: 'POST_WRITE')]
-    #[Route(path:"admin/user/{id}/edit", name:"admin.user.update", methods: ['GET', 'PUT'])]
+    #[Route(path:"user/{id}/edit", name:"admin.user.update", methods: ['GET', 'PUT'])]
     public function update(Request $request, string $id) {
         $user = $this->service->getUserById($id);
 
@@ -84,7 +85,7 @@ class UserController extends AbstractController
     }
 
     #[IsGranted(attribute: 'USER_WRITE')]
-    #[Route(path:"admin/user/{id}", name:"admin.user.delete", methods: 'DELETE')]
+    #[Route(path:"user/{id}", name:"admin.user.delete", methods: 'DELETE')]
     public function delete(Request $request, string $id) {
         $user = $this->service->getUserById($id);
 

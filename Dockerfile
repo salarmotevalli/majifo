@@ -1,43 +1,94 @@
-FROM ubuntu:22.04
+#syntax=docker/dockerfile:1
 
-ARG WWWGROUP
+# Versions
+FROM dunglas/frankenphp:1-php8.3 AS frankenphp_upstream
 
-WORKDIR /var/www/html
+# The different stages of this Dockerfile are meant to be built into separate images
+# https://docs.docker.com/develop/develop-images/multistage-build/#stop-at-a-specific-build-stage
+# https://docs.docker.com/compose/compose-file/#target
 
-ENV DEBIAN_FRONTEND=noninteractive
-ENV TZ=UTC
-ENV SUPERVISOR_PHP_COMMAND="symfony local:server:start"
 
-COPY . .
+# Base FrankenPHP image
+FROM frankenphp_upstream AS frankenphp_base
 
-RUN apt-get update \
-    && mkdir -p /etc/apt/keyrings \
-    && apt-get install -y gnupg gosu curl ca-certificates zip unzip git supervisor sqlite3 libcap2-bin libpng-dev python2 dnsutils librsvg2-bin fswatch ffmpeg nano  \
-    && curl -sS 'https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x14aa40ec0831756756d7f66c4f4ea0aae5267a6c' | gpg --dearmor | tee /etc/apt/keyrings/ppa_ondrej_php.gpg > /dev/null \
-    && echo "deb [signed-by=/etc/apt/keyrings/ppa_ondrej_php.gpg] https://ppa.launchpadcontent.net/ondrej/php/ubuntu jammy main" > /etc/apt/sources.list.d/ppa_ondrej_php.list \
-    && apt-get update \
-    && apt-get install -y php8.3-cli php8.3-dev php8.3-pdo php8.3-pdo-pgsql \
-    php8.3-curl \
-    php8.3-imap php8.3-pgsql php8.3-mbstring \
-    php8.3-xml php8.3-zip php8.3-bcmath php8.3-soap \
-    php8.3-intl php8.3-readline \
-    php8.3-ldap \
-    php8.3-msgpack php8.3-igbinary \
-    php8.3-pcov php8.3-xdebug \
-    && curl -sLS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer \
-    && apt-get update \
-    && apt-get update \
-    && apt-get -y autoremove \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+WORKDIR /app
 
-RUN groupadd --force -g 1000 symfony
-RUN useradd -ms /bin/bash --no-user-group -g 1000 -u 1337 symfony
+VOLUME /app/var/
 
-COPY ./docker/start-container /usr/local/bin/start-container
-COPY ./docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-RUN chmod +x /usr/local/bin/start-container
+# persistent / runtime deps
+# hadolint ignore=DL3008
+RUN apt-get update && apt-get install -y --no-install-recommends \
+	acl \
+	file \
+	gettext \
+	git \
+	&& rm -rf /var/lib/apt/lists/*
 
-EXPOSE 80/tcp
+RUN set -eux; \
+	install-php-extensions \
+		@composer \
+		apcu \
+		intl \
+		opcache \
+		zip \
+	;
 
-ENTRYPOINT start-container
+# https://getcomposer.org/doc/03-cli.md#composer-allow-superuser
+ENV COMPOSER_ALLOW_SUPERUSER=1
+
+ENV PHP_INI_SCAN_DIR=":$PHP_INI_DIR/app.conf.d"
+
+###> recipes ###
+###< recipes ###
+
+COPY --link frankenphp/conf.d/10-app.ini $PHP_INI_DIR/app.conf.d/
+COPY --link --chmod=755 frankenphp/docker-entrypoint.sh /usr/local/bin/docker-entrypoint
+COPY --link frankenphp/Caddyfile /etc/caddy/Caddyfile
+
+ENTRYPOINT ["docker-entrypoint"]
+
+HEALTHCHECK --start-period=60s CMD curl -f http://localhost:2019/metrics || exit 1
+CMD [ "frankenphp", "run", "--config", "/etc/caddy/Caddyfile" ]
+
+# Dev FrankenPHP image
+FROM frankenphp_base AS frankenphp_dev
+
+ENV APP_ENV=dev XDEBUG_MODE=off
+
+RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
+
+RUN set -eux; \
+	install-php-extensions \
+		xdebug \
+	;
+
+COPY --link frankenphp/conf.d/20-app.dev.ini $PHP_INI_DIR/app.conf.d/
+
+CMD [ "frankenphp", "run", "--config", "/etc/caddy/Caddyfile", "--watch" ]
+
+# Prod FrankenPHP image
+FROM frankenphp_base AS frankenphp_prod
+
+ENV APP_ENV=prod
+ENV FRANKENPHP_CONFIG="import worker.Caddyfile"
+
+RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
+
+COPY --link frankenphp/conf.d/20-app.prod.ini $PHP_INI_DIR/app.conf.d/
+COPY --link frankenphp/worker.Caddyfile /etc/caddy/worker.Caddyfile
+
+# prevent the reinstallation of vendors at every changes in the source code
+COPY --link composer.* symfony.* ./
+RUN set -eux; \
+	composer install --no-cache --prefer-dist --no-dev --no-autoloader --no-scripts --no-progress
+
+# copy sources
+COPY --link . ./
+RUN rm -Rf frankenphp/
+
+RUN set -eux; \
+	mkdir -p var/cache var/log; \
+	composer dump-autoload --classmap-authoritative --no-dev; \
+	composer dump-env prod; \
+	composer run-script --no-dev post-install-cmd; \
+	chmod +x bin/console; sync;

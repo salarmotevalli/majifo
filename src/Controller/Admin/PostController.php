@@ -18,6 +18,7 @@ use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Uid\Ulid;
 
+#[Route('/admin/')]
 #[IsGranted('VIEW_PANEL')]
 class PostController extends AbstractController
 {
@@ -28,7 +29,7 @@ class PostController extends AbstractController
     {}
 
     #[IsGranted('POST_READ')]
-    #[Route(path:"admin/post", name:"admin.post.index")]
+    #[Route(path:"post", name:"admin.post.index")]
     public function index(Request $request) {
         return $this->render('admin/page/post/index.html.twig', [
             'items' => $this->service->getPostsWithPagonation($request->query->get('page',1)),
@@ -36,7 +37,7 @@ class PostController extends AbstractController
     }
 
     #[IsGranted('POST_WRITE')]
-    #[Route(path:"admin/post/new", name:"admin.post.new") ]
+    #[Route(path:"post/new", name:"admin.post.new") ]
     public function new(
         Request $request,
         #[CurrentUser] User $user
@@ -65,7 +66,7 @@ class PostController extends AbstractController
     }
 
     #[IsGranted(attribute: 'POST_READ')]
-    #[Route(path:'admin/post/{id}', name:"admin.post.show", methods: 'GET')]
+    #[Route(path:'post/{id}', name:"admin.post.show", methods: 'GET')]
     public function show(Request $request, string $id) {
         $post = $this->service->getPostById($id);
 
@@ -81,7 +82,7 @@ class PostController extends AbstractController
     }
 
     #[IsGranted('POST_WRITE')]
-    #[Route(path:"admin/post/{id}/edit", name:"admin.post.update", methods: ['GET', 'PUT'])]
+    #[Route(path:"post/{id}/edit", name:"admin.post.update", methods: ['GET', 'PUT'])]
     public function update(
         Request $request,
         string $id,
@@ -115,7 +116,7 @@ class PostController extends AbstractController
     }
 
     #[IsGranted('POST_WRITE')]
-    #[Route(path:"admin/post/{id}", name:"admin.post.delete", methods: 'DELETE')]
+    #[Route(path:"post/{id}", name:"admin.post.delete", methods: 'DELETE')]
     public function delete(string $id) {
         $post = $this->service->getPostById($id);
 
@@ -129,7 +130,7 @@ class PostController extends AbstractController
     }
 
     #[IsGranted('POST_WRITE')]
-    #[Route(path: 'api/admin/post', name: 'api.admin.post.store', methods: 'POST')]
+    #[Route(path: 'api/post', name: 'api.admin.post.store', methods: 'POST')]
     public function createPost(
         #[MapRequestPayload] PostCreateDto $dto,
         #[CurrentUser] User $user
@@ -137,6 +138,6 @@ class PostController extends AbstractController
         /** @var Post */
         $post = $dto->toEntity();
         $post->setAuthor($user);
-        $this->service->store($post, $user);
+        $this->service->store($post);
     }
 }

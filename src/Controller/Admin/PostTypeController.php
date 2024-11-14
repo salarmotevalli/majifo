@@ -11,6 +11,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+#[Route('/admin/')]
 class PostTypeController extends AbstractController
 {
 
@@ -21,7 +22,7 @@ class PostTypeController extends AbstractController
     }
 
     #[IsGranted('POST_TYPE_READ')]
-    #[Route(path:"admin/post-type", name:"admin.post-type.index")]
+    #[Route(path:"post-type", name:"admin.post-type.index")]
     public function index(Request $request) {
         return $this->render("admin/page/post-type/index.html.twig", [
             'items' => $this->service->getPostTypesWithPagonation($request->query->get('page',1)),
@@ -29,7 +30,7 @@ class PostTypeController extends AbstractController
     }
 
     #[IsGranted('POST_TYPE_WRITE')]
-    #[Route(path:"admin/post-type/new", name:"admin.post-type.new")]
+    #[Route(path:"post-type/new", name:"admin.post-type.new")]
     public function new(Request $request) {
         $type = new PostType();
         
@@ -48,7 +49,7 @@ class PostTypeController extends AbstractController
 
   
     #[IsGranted('POST_TYPE_READ')]
-    #[Route(path:'admin/post-type/{id}', name:"admin.post-type.show", methods: 'GET')]
+    #[Route(path:'post-type/{id}', name:"admin.post-type.show", methods: 'GET')]
     public function show(Request $request, string $id) {
         $type = $this->service->getPostTypeById($id);
 
@@ -64,7 +65,7 @@ class PostTypeController extends AbstractController
     }
 
     #[IsGranted('POST_TYPE_WRITE')]
-    #[Route(path:"admin/post-type/{id}/edit", name:"admin.post-type.update", methods: ['GET', 'PUT'])]
+    #[Route(path:"post-type/{id}/edit", name:"admin.post-type.update", methods: ['GET', 'PUT'])]
     public function update(Request $request, string $id) {
         $type = $this->service->getPostTypeById($id);
 
@@ -86,7 +87,7 @@ class PostTypeController extends AbstractController
     }
 
     #[IsGranted('POST_TYPE_WRITE')]
-    #[Route(path:"admin/post-type/{id}", name:"admin.post-type.delete", methods: 'DELETE')]
+    #[Route(path:"post-type/{id}", name:"admin.post-type.delete", methods: 'DELETE')]
     public function delete(Request $request, string $id) {
         $type = $this->service->getPostTypeById($id);
 

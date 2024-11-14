@@ -16,6 +16,7 @@ use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
+#[Route('/admin/')]
 class ApprovalController extends AbstractController{
     public function __construct(
         private PostService $service,
@@ -24,7 +25,7 @@ class ApprovalController extends AbstractController{
         
     }
     #[IsGranted('READ_POST_STATUS')]
-    #[Route(path:"admin/approval", name:"admin.approval.index")]
+    #[Route(path:"approval", name:"admin.approval.index")]
     public function index(Request $request) {
         return $this->render("admin/page/approval/index.html.twig", [
             'items' => $this->service->getPostsWithPagonation(
@@ -35,7 +36,7 @@ class ApprovalController extends AbstractController{
     }
 
     #[IsGranted('CHANGE_POST_STATUS')]
-    #[Route(path:"admin/approval/{id}", name:"admin.approval.change-status", methods: 'PUT')]
+    #[Route(path:"approval/{id}", name:"admin.approval.change-status", methods: 'PUT')]
     public function changeStatus(
             Post $post,
             #[CurrentUser] User $user,

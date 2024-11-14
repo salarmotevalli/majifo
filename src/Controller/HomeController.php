@@ -17,10 +17,10 @@ class HomeController extends AbstractController
     #[Route('/', name: 'home')]
     public function home()
     {
-        $latestPosts = $this->postService->getLastFiveQualifiedPosts();
+        $latestPosts = $this->postService->getLastFourQualifiedPosts();
 
         return $this->render('page/home.html.twig', [
             'latestPosts' => $latestPosts
-        ]);
+        ])->setMaxAge(3600);
     }
 }

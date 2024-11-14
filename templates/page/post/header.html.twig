@@ -1,11 +1,3 @@
-{% extends 'layout.html.twig' %}
-
-{% block title %} Posts {% endblock %}
-
-{% block head %} {{ knp_pagination_rel_links(posts) }} {% endblock %}
-
-{% block content %}
- 
 <div>
     <form class="grid grid-cols-10 gap-3">
         <div>
@@ -31,11 +23,3 @@
         </div>
     </form>
 </div>
-{% include 'component/post/box.html.twig' with {'posts': posts} %}
-    
-    <div class="navigation">
-        {{ knp_pagination_render(posts, 'component/general/paginate.html.twig') }}
-    </div>
-
-{% endblock %}
-

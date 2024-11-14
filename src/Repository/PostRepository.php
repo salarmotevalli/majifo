@@ -26,8 +26,13 @@ class PostRepository extends ServiceEntityRepository
 
     public function getLastPublishedAndApprovedPostsQuery(array $scopes) {
         $qBuilder = $this
-        ->createQueryBuilder('post');
-        
+        ->createQueryBuilder('post')
+        ->addSelect('postType')
+        ->addSelect('categories')
+        ->leftJoin('post.postType', 'postType')
+        ->leftJoin('post.categories', 'categories');
+
+
         $this->isPublished($qBuilder, true);
         $this->status($qBuilder, ApprovalStatusEnum::APPROVED);
         $this->applyScopeSafe($qBuilder, $scopes);
@@ -41,6 +46,7 @@ class PostRepository extends ServiceEntityRepository
         return $this->getLastPublishedAndApprovedPostsQuery([])
             ->setMaxResults($n)
             ->getQuery()
+            ->useQueryCache(true)
             ->getResult();
     }
 

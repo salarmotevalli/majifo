@@ -12,6 +12,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+#[Route('/admin/')]
 #[IsGranted('VIEW_PANEL')]
 class CategoryController extends AbstractController
 {
@@ -22,7 +23,7 @@ class CategoryController extends AbstractController
     }
 
     #[IsGranted('CATEGORY_READ')]
-    #[Route(path:"admin/category", name:"admin.category.index")]
+    #[Route(path:"category", name:"admin.category.index")]
     public function index(Request $request) {
         return $this->render("admin/page/category/index.html.twig", [
             'items' => $this->service->getCategoriesWithPagonation($request->query->get('page',1)),
@@ -30,7 +31,7 @@ class CategoryController extends AbstractController
     }
 
     #[IsGranted('CATEGORY_WRITE')]
-    #[Route(path:"admin/category/new", name:"admin.category.new", methods: ['POST', 'GET'])]
+    #[Route(path:"category/new", name:"admin.category.new", methods: ['POST', 'GET'])]
     public function new(Request $request) {
         $cat = new Category();
 
@@ -48,7 +49,7 @@ class CategoryController extends AbstractController
     }
 
     #[IsGranted('CATEGORY_READ')]
-    #[Route(path:'admin/category/{id}', name:"admin.category.show", methods: 'GET')]
+    #[Route(path:'category/{id}', name:"admin.category.show", methods: 'GET')]
     public function show(Request $request, string $id) {
         $cat = $this->service->getCategoryById($id);
 
@@ -64,7 +65,7 @@ class CategoryController extends AbstractController
     }
     
     #[IsGranted('CATEGORY_WRITE')]
-    #[Route(path:"admin/category/{id}/edit", name:"admin.category.update", methods: ['GET', 'PUT'])]
+    #[Route(path:"category/{id}/edit", name:"admin.category.update", methods: ['GET', 'PUT'])]
     public function update(Request $request, string $id) {
         $cat = $this->service->getCategoryById($id);
 
@@ -86,7 +87,7 @@ class CategoryController extends AbstractController
     }
 
     #[IsGranted('CATEGORY_WRITE')]
-    #[Route(path:"admin/category/{id}", name:"admin.category.delete", methods: 'DELETE')]
+    #[Route(path:"category/{id}", name:"admin.category.delete", methods: 'DELETE')]
     public function delete(Request $request, string $id) {
         $cat = $this->service->getCategoryById($id);
 

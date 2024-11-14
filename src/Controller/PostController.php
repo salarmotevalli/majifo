@@ -2,17 +2,14 @@
 
 namespace App\Controller;
 
-use App\DTO\Post\PostIndexDTO;
 use App\DTO\Post\PostIndexQueryDto;
 use App\Service\CategoryService;
 use App\Service\PostService;
 use App\Service\PostTypeService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Attribute\MapQueryString;
-use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Uid\Ulid;
+use Symfony\Component\HttpKernel\Attribute\Cache;
 
 class PostController extends AbstractController
 {
@@ -33,15 +30,22 @@ class PostController extends AbstractController
             $dto->getPage(),
             $dto->getFilters()
         );
-        
-        
+   
+        return $this->render('page/post/posts.html.twig', [
+            'posts' => $posts,
+        ]);
+    }
+
+    #[Route('/post/header', name: 'post.index.header', methods: 'GET')]
+    public function indexHeader(Request $request)
+    {   
         $categories = $this->categoryService->getAll();
         $types = $this->typeService->getAll();
 
-        return $this->render('page/posts.html.twig', [
-            'posts' => $posts,
+        return $this->render('page/post/header.html.twig', [
             'types' => $types,
             'categories' => $categories
-        ]);
+        ])->setMaxAge(3600);
     }
+
 }
