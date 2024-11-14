@@ -140,6 +140,7 @@ class AppFixtures extends Fixture
             ['username' => 'Jane Doe' ,'email' => 'jane_admin@symfony.com','roles' => [RoleEnum::SUPER_ADMIN]],
             ['username' => 'Tom Doe' ,'email' => 'tom_admin@symfony.com','roles' => [RoleEnum::NORMAL_ADMIN]],
             ['username' => 'John Nil' ,'email' => 'john_user@symfony.com','roles' => [RoleEnum::READ_ONLY_ADMIN, RoleEnum::POST_MANAGER_ADMIN]],
+            ['username' => 'Normal' ,'email' => 'normal@symfony.com','roles' => []],
         ];
     }
 }

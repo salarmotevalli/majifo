@@ -1,0 +1,26 @@
+version: "3"
+
+services:
+  majifo:
+    image: majifo/symfony
+    build:
+      context: .
+    ports:
+      - "80:8000"
+    volumes:
+      - ".:/var/www/html"
+
+  postgres:
+    image: postgres:17
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=abc123
+      - POSTGRES_DB=symfony
+      - POSTGRES_USER=symfony
+    volumes:
+      - "postgres:/var/lib/postgresql/data"
+
+
+volumes:
+  postgres:
