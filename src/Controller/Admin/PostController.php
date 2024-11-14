@@ -88,19 +88,15 @@ class PostController extends AbstractController
         #[CurrentUser] User $user
         ) {
         $post = $this->service->getPostById($id);
-        $postStatus = $post->getStatus();
-
+    
         if (! $post) {
             throw new NotFoundHttpException();
         }
 
         $form = $this->createForm(PostType::class, $post, ['method' => 'PUT']);
-        
         $form->handleRequest($request);
       
         if ($form->isSubmitted() && $form->isValid()) {
-            $isStatusChanged = $post->getStatus() != $postStatus;
-
             $uploadedFile = $form['imageFile']->getData();
            
             if ($uploadedFile) {
@@ -108,7 +104,7 @@ class PostController extends AbstractController
                 $post->setImageFilename($fileName);
             }
 
-            $this->service->store($post, $user, $isStatusChanged);
+            $this->service->store($post);
             
             return $this->redirectToRoute('admin.post.index');
         }

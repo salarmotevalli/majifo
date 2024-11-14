@@ -50,24 +50,16 @@ class PostService
                 return $this->repo->getLastNPublishedAndApprovedPosts(5);
             }
         );
-        
-        
-        // repo
-
-        // ->createQueryBuilder('p')
-        // ->setMaxResults(4)
-        // ->getQuery()
-        // ->getResult();
     }
 
-    public function store(Post $post, User $user, $isStatusChanged = false) {
-        $post->setStatus(ApprovalStatusEnum::PENDING);
-         
+    public function store(Post $post) {
         $this->repo->save($post);
-        
-        if($isStatusChanged) {
-            $this->dispatcher->dispatch((new PostStatusUpdatedEvent($post, $user)));     
-        }
+    }
+
+    public function storeStatus(Post $post, User $user) {
+        $this->repo->save($post);
+
+        $this->dispatcher->dispatch(new PostStatusUpdatedEvent($post, $user));
     }
 
     public function getPostById(string $id): ?Post {

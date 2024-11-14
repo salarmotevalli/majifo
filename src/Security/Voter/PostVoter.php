@@ -2,6 +2,7 @@
 
 namespace App\Security\Voter;
 
+use App\Entity\Post;
 use App\Entity\User;
 use App\Enum\RoleEnum;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -14,7 +15,14 @@ final class PostVoter extends Voter
 
     protected function supports(string $attribute, mixed $subject): bool
     {
-        return in_array($attribute, [self::READ, self::WRITE]);
+
+        if  (! in_array($attribute, [self::READ, self::WRITE])) 
+        { return  false; }
+
+
+        // TODO: refactor + comment
+        return $subject ? 
+             $subject instanceof Post : true;
     }
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
@@ -28,7 +36,7 @@ final class PostVoter extends Voter
 
         return match ($attribute) {
             self::READ => $this->adminCanReadPost($user),
-            self::WRITE => $this->adminCanWritePost($user),
+            self::WRITE => $this->adminCanWritePost($user, $subject),
             default => false,
         };
     }
@@ -44,13 +52,15 @@ final class PostVoter extends Voter
         return $this->containAtLeastOneAllowedRole($allowed, $user->getRoles());   
     }
 
-    private function adminCanWritePost(User $user) : bool {
+    private function adminCanWritePost(User $user, $post) : bool {
         $allowed = [
             RoleEnum::NORMAL_ADMIN->value,
             RoleEnum::POST_MANAGER_ADMIN->value,
             RoleEnum::SUPER_ADMIN->value
         ];
         
-        return $this->containAtLeastOneAllowedRole($allowed, $user->getRoles());
+        return $this->containAtLeastOneAllowedRole($allowed, $user->getRoles())
+                // && $user === $post->getAuthor()
+                ;
     }
 }

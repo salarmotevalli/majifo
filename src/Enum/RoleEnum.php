@@ -8,6 +8,7 @@ enum RoleEnum: string {
 
     use EnumToArrayTrait ;
 
+    // ADMIN ROLES
     case SUPER_ADMIN = 'ROLE_SUPER_ADMIN';
     case NORMAL_ADMIN = 'ROLE_NORMAL_ADMIN';
     case READ_ONLY_ADMIN = 'ROLE_READ_ONLY_ADMIN';

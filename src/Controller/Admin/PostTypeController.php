@@ -53,7 +53,7 @@ class PostTypeController extends AbstractController
         $type = $this->service->getPostTypeById($id);
 
         if (! $type) {
-            return $this->createNotFoundException();
+            throw new NotFoundHttpException();
         }
 
         $form = $this->createForm(PostType::class, $type, ['disabled' => true]);
