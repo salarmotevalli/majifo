@@ -45,10 +45,10 @@ class PostController extends AbstractController
         ) {
         $post =  new Post();
         $post->setAuthor($user);
-
+        
         $form = $this->createForm(PostType::class, $post);
-
         $form->handleRequest($request);
+
         if ($form->isSubmitted() && $form->isValid()) {
             $post->setStatus(ApprovalStatusEnum::PENDING);
             $uploadedFile = $form['imageFile']->getData();
@@ -83,14 +83,15 @@ class PostController extends AbstractController
         ]);
     }
 
-    #[IsGranted('POST_WRITE')]
+    
     #[Route(path:"post/{id}/edit", name:"admin.post.update", methods: ['GET', 'PUT'])]
     public function update(
         Request $request,
         string $id,
         #[CurrentUser] User $user
-        ) {
+    ) {
         $post = $this->service->getPostById($id);
+        $this->isGranted('POST_WRITE', $post);
     
         if (! $post) {
             throw new NotFoundHttpException();

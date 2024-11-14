@@ -39,7 +39,21 @@ open `0.0.0.0:8000/admin`
 
 
 
+### home page
+home page shows 4 last published and approved posts
 
 
+### Post page
+it shows the last published and 
+approved posts with category and
+post type filter with pagination.
 
-### Post
+#### Post Creation Flow:
+Admins can write a post. 
+in `admin/approval` other admins who have access to approval section
+can change the status of a post
+
+- the author cannot change the status of it's post (except super admin)
+- other admins cannot change the content of post (except super admin)
+
+

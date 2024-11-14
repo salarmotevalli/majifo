@@ -34,6 +34,10 @@ final class PostVoter extends Voter
             return false;
         }
 
+        if ($this->isUserSuperAdmin($user)) {
+            return true;
+        }
+
         return match ($attribute) {
             self::READ => $this->adminCanReadPost($user),
             self::WRITE => $this->adminCanWritePost($user, $subject),
@@ -45,7 +49,6 @@ final class PostVoter extends Voter
         $allowed = [
             RoleEnum::NORMAL_ADMIN->value,
             RoleEnum::POST_MANAGER_ADMIN->value,
-            RoleEnum::SUPER_ADMIN->value,
             RoleEnum::READ_ONLY_ADMIN->value
         ];
 
@@ -56,11 +59,15 @@ final class PostVoter extends Voter
         $allowed = [
             RoleEnum::NORMAL_ADMIN->value,
             RoleEnum::POST_MANAGER_ADMIN->value,
-            RoleEnum::SUPER_ADMIN->value
         ];
         
         return $this->containAtLeastOneAllowedRole($allowed, $user->getRoles())
-                // && $user === $post->getAuthor()
-                ;
+                && $this->isOwner($user, $post);
+    }
+
+    private function isOwner(User $user, ?Post $post) {
+        return $post 
+            ? $post->getAuthor() === $user
+            : true;
     }
 }

@@ -25,6 +25,11 @@ final class CategoryVoter extends Voter
         if (!$user instanceof UserInterface) {
             return false;
         }
+        
+        if ($this->isUserSuperAdmin($user)) {
+            return true;
+        }
+        
         return match ($attribute) {
             self::READ => $this->adminCanReadCategory($user),
             self::WRITE => $this->adminCanWriteCategory($user),
@@ -35,7 +40,6 @@ final class CategoryVoter extends Voter
     private function adminCanReadCategory(User $user) : bool {
         $allowed = [
             RoleEnum::NORMAL_ADMIN->value,
-            RoleEnum::SUPER_ADMIN->value,
             RoleEnum::READ_ONLY_ADMIN->value
         ];
         
@@ -45,7 +49,6 @@ final class CategoryVoter extends Voter
     private function adminCanWriteCategory(User $user) : bool {
         $allowed = [
             RoleEnum::NORMAL_ADMIN->value,
-            RoleEnum::SUPER_ADMIN->value
         ];
 
         return $this->containAtLeastOneAllowedRole($allowed, $user->getRoles());

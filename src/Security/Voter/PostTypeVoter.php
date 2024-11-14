@@ -28,6 +28,10 @@ final class PostTypeVoter extends Voter
             return false;
         }
 
+        if ($this->isUserSuperAdmin($user)) {
+            return true;
+        }
+
         return match ($attribute) {
             self::READ => $this->adminCanReadPostType($user),
             self::WRITE => $this->adminCanWritePostType($user),
@@ -38,7 +42,6 @@ final class PostTypeVoter extends Voter
     private function adminCanReadPostType(User $user) : bool {
         $allowed = [
             RoleEnum::NORMAL_ADMIN->value,
-            RoleEnum::SUPER_ADMIN->value,
             RoleEnum::READ_ONLY_ADMIN->value
         ];
 
@@ -48,7 +51,6 @@ final class PostTypeVoter extends Voter
     private function adminCanWritePostType(User $user) : bool {
         $allowed = [
             RoleEnum::NORMAL_ADMIN->value,
-            RoleEnum::SUPER_ADMIN->value
         ];
 
         return $this->containAtLeastOneAllowedRole($allowed, $user->getRoles());

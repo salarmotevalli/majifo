@@ -113,7 +113,7 @@ class Post
         return $this;
     }
 
-    public function getAuthor(): ?PostType
+    public function getAuthor(): ?User
     {
         return $this->author;
     }
