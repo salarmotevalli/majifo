@@ -40,9 +40,15 @@ final class ApprovalVoter extends Voter
 
         $allowed = [
             RoleEnum::POST_MANAGER_ADMIN->value,
+            RoleEnum::NORMAL_ADMIN->value,
         ];
+
+        $hasCorrectRole = $this->containAtLeastOneAllowedRole($allowed, $user->getRoles());
+
+        if ($attribute == self::READ) {
+            return $hasCorrectRole;
+        }
                 
-        return $this->containAtLeastOneAllowedRole($allowed, $user->getRoles())
-            && $subject->getAuthor() != $user;
+        return $hasCorrectRole && $subject->getAuthor() != $user;
     }
 }

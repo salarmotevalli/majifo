@@ -23,6 +23,10 @@
               {% if is_granted('USER_READ') %}
               <a href="{{ path('admin.user.index') }}" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">User</a>
               {% endif %}
+
+              {% if is_granted('READ_POST_STATUS') %}
+              <a href="{{ path('admin.approval.index') }}" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Post Approval</a>
+              {% endif %}
             </div>
           </div>
         </div>

@@ -46,7 +46,6 @@ class PostRepository extends ServiceEntityRepository
         return $this->getLastPublishedAndApprovedPostsQuery([])
             ->setMaxResults($n)
             ->getQuery()
-            ->useQueryCache(true)
             ->getResult();
     }
 

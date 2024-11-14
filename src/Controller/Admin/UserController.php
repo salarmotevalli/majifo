@@ -28,7 +28,7 @@ class UserController extends AbstractController
         ]);
     }
 
-    #[IsGranted(attribute: 'USER_Write')]
+    #[IsGranted(attribute: 'USER_WRITE')]
     #[Route(path:"user/new", name:"admin.user.new") ]
     public function new(Request $request) {
         $user =  new User();

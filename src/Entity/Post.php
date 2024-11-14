@@ -23,7 +23,7 @@ class Post
     #[ORM\Column(length: 60)]
     private ?string $title = null;
 
-    #[ORM\Column(enumType: ApprovalStatusEnum::class)]
+    #[ORM\Column(enumType: ApprovalStatusEnum::class, options: ["default" => ApprovalStatusEnum::PENDING])]
     private ?ApprovalStatusEnum $status = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
