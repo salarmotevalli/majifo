@@ -37,8 +37,9 @@ class PostType extends AbstractType
             ])
             ->add('status', EnumType::class, [
                 'class' => ApprovalStatusEnum::class,
-                'disabled' => true
-            ])
+                'disabled' => true,
+                'data' => ApprovalStatusEnum::PENDING,
+                ])
             ->add('imageFile', FileType::class, [
                 'mapped' => false,
                 'required' => false,

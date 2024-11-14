@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 use App\DTO\Post\PostCreateDto;
 use App\Entity\Post;
 use App\Entity\User;
+use App\Enum\ApprovalStatusEnum;
 use App\Form\PostType;
 use App\Service\FileUploadService;
 use App\Service\PostService;
@@ -49,14 +50,15 @@ class PostController extends AbstractController
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
+            $post->setStatus(ApprovalStatusEnum::PENDING);
             $uploadedFile = $form['imageFile']->getData();
-           
+            
             if ($uploadedFile) {
                 $fileName = $this->fileService->handleUploadedFile($uploadedFile);
                 $post->setImageFilename($fileName);
             }
-
-            $this->service->store($post, $user);
+ 
+            $this->service->store($post);
             return $this->redirectToRoute('admin.post.index');
         }
 
